@@ -1,13 +1,7 @@
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.time.Period;
-import java.util.Date;
-import java.util.Formatter;
 import java.util.Scanner;
 
 public class WorkTimeTrackAutomationApp {
+    public static final String FILE_PATH = "testfile.xlsx";
     public static void main(String[] args) {
         WorkingDay workingDay = new WorkingDay();
         workingDay.setStart();
@@ -24,6 +18,8 @@ public class WorkTimeTrackAutomationApp {
         workingDay.setFinish();
         System.out.println("Finished working at: " + workingDay.getFinish());
         workingDay.calculateDuration();
-        System.out.println(workingDay.getDuration());
+        System.out.println("Duration:" + workingDay.getDuration());
+        workingDay.writeToExcel(FILE_PATH);
+
     }
 }
