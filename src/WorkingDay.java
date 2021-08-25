@@ -45,6 +45,16 @@ public class WorkingDay {
             XSSFWorkbook workbook = new XSSFWorkbook(file);
             XSSFSheet sheet = workbook.getSheetAt(workbook.getNumberOfSheets()-1);
             FileOutputStream outputStream = new FileOutputStream(path);
+            if(indexOfEmptyRow == 0) {
+                Row row = sheet.createRow(indexOfEmptyRow);
+                Cell cell = row.createCell(0);
+                Cell cell1 = row.createCell(1);
+                Cell cell2 = row.createCell(2);
+                cell.setCellValue("Start");
+                cell1.setCellValue("Finish");
+                cell2.setCellValue("Duration");
+                indexOfEmptyRow ++;
+            }
             Row row = sheet.createRow(indexOfEmptyRow);
             Cell cell = row.createCell(0);
             Cell cell1 = row.createCell(1);
@@ -67,7 +77,7 @@ public class WorkingDay {
         try {
             FileInputStream file = new FileInputStream(path);
             XSSFWorkbook workbook = new XSSFWorkbook(file);
-            XSSFSheet sheet = workbook.getSheetAt(0);
+            XSSFSheet sheet = workbook.getSheetAt(workbook.getNumberOfSheets() - 1);
             Iterator<Row> rowIterator = sheet.iterator();
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
@@ -92,7 +102,7 @@ public class WorkingDay {
         int minute = timeStamp.getMinute();
         int second = timeStamp.getSecond();
         return timeStamp.getYear() + "-" + timeStamp.getMonth() + "-" + (day < 10 ? "0" + day : day) + " "
-                + (hour < 10 ? "0" + hour : hour) + ":" + (minute < 10 ? "0" + minute : minute) + ":" + (second < 10 ? "" + second : second);
+                + (hour < 10 ? "0" + hour : hour) + ":" + (minute < 10 ? "0" + minute : minute) + ":" + (second < 10 ? "0" + second : second);
     }
     public String returnDuration(Duration duration) {
         long durationSeconds = duration.getSeconds();
@@ -107,8 +117,9 @@ public class WorkingDay {
         }
         if(newMinutes > 59){
             newHours = newMinutes / 60;
-            newMinutes = newMinutes / 60;
+            newMinutes = newMinutes % 60;
         }
         return newHours + ":" + (newMinutes < 10 ? "0" + newMinutes : newMinutes) + ":" + (newSeconds < 10 ? "0" + newSeconds : newSeconds) ;
     }
+
     }
