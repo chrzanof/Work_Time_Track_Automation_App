@@ -9,32 +9,12 @@ import java.time.OffsetDateTime;
 import java.util.Iterator;
 
 public class WorkingDay {
-    OffsetDateTime start;
-    OffsetDateTime finish;
-    Duration duration;
+    private OffsetDateTime start;
+    private OffsetDateTime end;
+    private Duration duration;
+    private String task;
 
-    public OffsetDateTime getStart() {
-        return start;
-    }
-
-    public void setStart() {
-        this.start = OffsetDateTime.now();
-    }
-
-    public OffsetDateTime getFinish() {
-        return finish;
-    }
-
-    public void setFinish() {
-        this.finish = OffsetDateTime.now();
-    }
-
-    public Duration getDuration() {
-        return duration;
-    }
-
-    public void calculateDuration() {
-        this.duration = Duration.between(start, finish);
+    public WorkingDay() {
     }
 
     public void writeToExcel(String path) {
@@ -60,8 +40,8 @@ public class WorkingDay {
             Cell cell1 = row.createCell(1);
             Cell cell2 = row.createCell(2);
             cell.setCellValue(returnTimeStampString(start));
-            cell1.setCellValue(returnTimeStampString(finish));
-            cell2.setCellValue(returnDuration(duration));
+            cell1.setCellValue(returnTimeStampString(end));
+            cell2.setCellValue(getDurationAsString(duration));
             workbook.write(outputStream);
             workbook.close();
             file.close();
@@ -69,6 +49,14 @@ public class WorkingDay {
         catch (Exception e)
         {
             e.printStackTrace();
+        }
+    }
+
+    public String getFormattedDuration() {
+        if (this.duration == null) {
+            return "Can not be calculated, start and end are required!";
+        } else {
+            return this.getDurationAsString(this.duration);
         }
     }
 
@@ -96,6 +84,7 @@ public class WorkingDay {
         }
         return i;
     }
+
     public String returnTimeStampString(OffsetDateTime timeStamp) {
         int day = timeStamp.getDayOfMonth();
         int hour = timeStamp.getHour();
@@ -104,14 +93,15 @@ public class WorkingDay {
         return timeStamp.getYear() + "-" + timeStamp.getMonth() + "-" + (day < 10 ? "0" + day : day) + " "
                 + (hour < 10 ? "0" + hour : hour) + ":" + (minute < 10 ? "0" + minute : minute) + ":" + (second < 10 ? "0" + second : second);
     }
-    public String returnDuration(Duration duration) {
+
+    private String getDurationAsString(Duration duration) {
         long durationSeconds = duration.getSeconds();
         int newHours = 0;
         int newMinutes = 0 ;
         int newSeconds;
         if (durationSeconds > 59) {
-             newMinutes = (int) (durationSeconds / 60);
-             newSeconds = (int) (durationSeconds % 60);
+            newMinutes = (int) (durationSeconds / 60);
+            newSeconds = (int) (durationSeconds % 60);
         }else {
             newSeconds = (int) durationSeconds;
         }
@@ -122,4 +112,49 @@ public class WorkingDay {
         return newHours + ":" + (newMinutes < 10 ? "0" + newMinutes : newMinutes) + ":" + (newSeconds < 10 ? "0" + newSeconds : newSeconds) ;
     }
 
+    public OffsetDateTime getStart() {
+        return start;
     }
+
+    public void start() {
+        this.start = OffsetDateTime.now();
+    }
+
+    public OffsetDateTime getEnd() {
+        return end;
+    }
+
+    public void end() {
+        this.end = OffsetDateTime.now();
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void calculateDuration() {
+        if (start != null && end != null) {
+            this.duration = Duration.between(start, end);
+        }
+    }
+
+    public void setStart(OffsetDateTime now) {
+        this.start = now;
+    }
+
+    public void setEnd(OffsetDateTime now) {
+        this.end = now;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public String getTask() {
+        return task;
+    }
+
+    public void setTask(String task) {
+        this.task = task;
+    }
+}
