@@ -4,9 +4,13 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
 
 public class WorkingDay {
     private OffsetDateTime start;
@@ -17,41 +21,6 @@ public class WorkingDay {
     public WorkingDay() {
     }
 
-    public void writeToExcel(String path) {
-        int indexOfEmptyRow = returnIndexOfEmptyRow(path);
-        try
-        {
-            FileInputStream file = new FileInputStream(path);
-            XSSFWorkbook workbook = new XSSFWorkbook(file);
-            XSSFSheet sheet = workbook.getSheetAt(workbook.getNumberOfSheets()-1);
-            FileOutputStream outputStream = new FileOutputStream(path);
-            if(indexOfEmptyRow == 0) {
-                Row row = sheet.createRow(indexOfEmptyRow);
-                Cell cell = row.createCell(0);
-                Cell cell1 = row.createCell(1);
-                Cell cell2 = row.createCell(2);
-                cell.setCellValue("Start");
-                cell1.setCellValue("Finish");
-                cell2.setCellValue("Duration");
-                indexOfEmptyRow ++;
-            }
-            Row row = sheet.createRow(indexOfEmptyRow);
-            Cell cell = row.createCell(0);
-            Cell cell1 = row.createCell(1);
-            Cell cell2 = row.createCell(2);
-            cell.setCellValue(returnTimeStampString(start));
-            cell1.setCellValue(returnTimeStampString(end));
-            cell2.setCellValue(getDurationAsString(duration));
-            workbook.write(outputStream);
-            workbook.close();
-            file.close();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
     public String getFormattedDuration() {
         if (this.duration == null) {
             return "Can not be calculated, start and end are required!";
@@ -60,38 +29,22 @@ public class WorkingDay {
         }
     }
 
-    private int returnIndexOfEmptyRow(String path) {
-        int i = 0;
-        try {
-            FileInputStream file = new FileInputStream(path);
-            XSSFWorkbook workbook = new XSSFWorkbook(file);
-            XSSFSheet sheet = workbook.getSheetAt(workbook.getNumberOfSheets() - 1);
-            Iterator<Row> rowIterator = sheet.iterator();
-            while (rowIterator.hasNext()) {
-                Row row = rowIterator.next();
-                Cell cell = row.getCell(0);
-                String str = cell.getStringCellValue();
-                if (str == null) {
-                    break;
-                } else {
-                    i++;
-                }
-            }
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
+    public String getFormattedTimeStamp(OffsetDateTime timeStamp) {
+        if(timeStamp == null) {
+            return "time Stamp is not set yet!";
+        } else {
+            return  this.getTimeStampAsString(timeStamp);
         }
-        return i;
     }
 
-    public String returnTimeStampString(OffsetDateTime timeStamp) {
+    private String getTimeStampAsString(OffsetDateTime timeStamp) {
+        int month = timeStamp.getMonth().getValue();
         int day = timeStamp.getDayOfMonth();
         int hour = timeStamp.getHour();
         int minute = timeStamp.getMinute();
         int second = timeStamp.getSecond();
-        return timeStamp.getYear() + "-" + timeStamp.getMonth() + "-" + (day < 10 ? "0" + day : day) + " "
-                + (hour < 10 ? "0" + hour : hour) + ":" + (minute < 10 ? "0" + minute : minute) + ":" + (second < 10 ? "0" + second : second);
+        return timeStamp.getYear() + "-" + (month < 10 ? "0" + month : month) + "-" + (day < 10 ? "0" + day : day) + " "
+               + (hour < 10 ? "0" + hour : hour) + ":" + (minute < 10 ? "0" + minute : minute) + ":" + (second < 10 ? "0" + second : second);
     }
 
     private String getDurationAsString(Duration duration) {
