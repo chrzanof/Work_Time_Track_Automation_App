@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 
 public class WorkTimeTrackAutomationApp {
-    public static final String FILE_PATH = "testfile1.xlsx";
+    public static final String FILE_PATH = "testfile.xlsx";
     public static ExcelDB db;
     public static WorkingDayDAO  workingDayDAO;
     public static void main(String[] args) {

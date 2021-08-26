@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class ExcelDB {
@@ -27,10 +28,19 @@ public class ExcelDB {
             if(file.length() == 0) {
                 createNewSheet();
             }
-            if (this.returnIndexOfEmptyRow() == 0) {
-                this.addHeader();
-            }
+//            if (this.returnIndexOfEmptyRow() == 0) {
+//            }
         }
+    }
+
+    public int returnMonthFromLastSheetName() throws Exception {
+        FileInputStream file = new FileInputStream(this.path.toString());
+        XSSFWorkbook workbook = new XSSFWorkbook(file);
+        String sheetName = workbook.getSheetAt(workbook.getNumberOfSheets() - 1).getSheetName();
+        String[] splitSheetName = sheetName.split("-");
+        workbook.close();
+        file.close();
+        return Integer.parseInt(splitSheetName[1]);
     }
 
     public void createNewSheet() throws Exception{
@@ -40,6 +50,7 @@ public class ExcelDB {
         workbook.write(output);
         workbook.close();
         output.close();
+        addHeader();
     }
 
     public int returnIndexOfEmptyRow() {
@@ -85,18 +96,21 @@ public class ExcelDB {
         cell3.setCellValue("Duration");
         workbook.write(outputStream);
         workbook.close();
+        file.close();
         outputStream.close();
     }
 
     public void addRecord(WorkingDay workingDay) throws Exception {
+        if (returnMonthFromLastSheetName() == workingDay.getStart().getMonthValue()){
+            createNewSheet();
+        }
         int indexOfEmptyRow = returnIndexOfEmptyRow();
+        /*if (indexOfEmptyRow == 0) {
+        }*/
         FileInputStream file = new FileInputStream(this.path.toString());
         XSSFWorkbook workbook = new XSSFWorkbook(file);
         XSSFSheet sheet = workbook.getSheetAt(workbook.getNumberOfSheets() - 1);
         FileOutputStream outputStream = new FileOutputStream(this.path.toString());
-        if (indexOfEmptyRow == 0) {
-            addHeader();
-        }
         Row row = sheet.createRow(indexOfEmptyRow);
         Cell cell = row.createCell(0);
         Cell cell1 = row.createCell(1);
