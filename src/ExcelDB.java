@@ -40,6 +40,13 @@ public class ExcelDB {
         return Integer.parseInt(splitSheetName[1]);
     }
 
+    public boolean isNowTheSameMonthAsInLastSheetName (WorkingDay workingDay) throws Exception {
+        if(returnMonthFromLastSheetName() != workingDay.getStart().getMonthValue() || returnYearFromLastSheetName() != workingDay.getStart().getYear()) {
+            return false;
+        }
+        return true;
+    }
+
     public int returnYearFromLastSheetName() throws Exception {
         FileInputStream file = new FileInputStream(this.path.toString());
         XSSFWorkbook workbook = new XSSFWorkbook(file);
@@ -53,14 +60,12 @@ public class ExcelDB {
     public void createNextSheet(String sheetName) throws Exception {
         FileInputStream file = new FileInputStream(this.path.toString());
         XSSFWorkbook workbook = new XSSFWorkbook(file);
-        //XSSFSheet sheet = workbook.getSheetAt(workbook.getNumberOfSheets() - 1);
         FileOutputStream output = new FileOutputStream(this.path.toString());
         XSSFSheet sheet1 = workbook.createSheet(sheetName);
         workbook.write(output);
         workbook.close();
         file.close();
         output.close();
-        addHeader();
     }
 
     public void createFirstSheet(String sheetName) throws Exception {
@@ -70,11 +75,9 @@ public class ExcelDB {
         workbook.write(output);
         workbook.close();
         output.close();
-        addHeader();
     }
 
     public int returnIndexOfEmptyRow() {
-        // co jak Path nie jest zdefinowane?
 
         int i = 0;
         try {
@@ -100,7 +103,7 @@ public class ExcelDB {
         return i;
     }
 
-    private void addHeader() throws Exception {
+    public void addHeader() throws Exception {
         FileInputStream file = new FileInputStream(this.path.toString());
         XSSFWorkbook workbook = new XSSFWorkbook(file);
         XSSFSheet sheet = workbook.getSheetAt(workbook.getNumberOfSheets() - 1);
@@ -121,14 +124,7 @@ public class ExcelDB {
     }
 
     public void addRecord(WorkingDay workingDay) throws Exception {
-        if (returnMonthFromLastSheetName() != workingDay.getStart().getMonthValue() || returnYearFromLastSheetName() != workingDay.getStart().getYear()){
-            createNextSheet(OffsetDateTime.now().getYear() + "-"+ OffsetDateTime.now().getMonthValue());
-        }
         int indexOfEmptyRow = returnIndexOfEmptyRow();
-        if(indexOfEmptyRow == 0){
-            addHeader();
-            indexOfEmptyRow = returnIndexOfEmptyRow();
-        }
         FileInputStream file = new FileInputStream(this.path.toString());
         XSSFWorkbook workbook = new XSSFWorkbook(file);
         XSSFSheet sheet = workbook.getSheetAt(workbook.getNumberOfSheets() - 1);
