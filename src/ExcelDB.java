@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.OffsetDateTime;
 import java.util.Iterator;
+import java.util.List;
 
 public class ExcelDB {
     private Path path;
@@ -29,17 +30,6 @@ public class ExcelDB {
             }
         }
     }
-
-    public int returnMonthFromLastSheetName() throws Exception {
-        FileInputStream file = new FileInputStream(this.path.toString());
-        XSSFWorkbook workbook = new XSSFWorkbook(file);
-        String sheetName = workbook.getSheetAt(workbook.getNumberOfSheets() - 1).getSheetName();
-        String[] splitSheetName = sheetName.split("-");
-        workbook.close();
-        file.close();
-        return Integer.parseInt(splitSheetName[1]);
-    }
-
     public boolean isNowTheSameMonthAsInLastSheetName (WorkingDay workingDay) throws Exception {
         if(returnMonthFromLastSheetName() != workingDay.getStart().getMonthValue() || returnYearFromLastSheetName() != workingDay.getStart().getYear()) {
             return false;
@@ -47,13 +37,19 @@ public class ExcelDB {
         return true;
     }
 
-    public int returnYearFromLastSheetName() throws Exception {
+    public String returnLastSheetName() throws Exception{
         FileInputStream file = new FileInputStream(this.path.toString());
         XSSFWorkbook workbook = new XSSFWorkbook(file);
-        String sheetName = workbook.getSheetAt(workbook.getNumberOfSheets() - 1).getSheetName();
-        String[] splitSheetName = sheetName.split("-");
-        workbook.close();
-        file.close();
+        return workbook.getSheetAt(workbook.getNumberOfSheets() - 1).getSheetName();
+    }
+
+    public int returnMonthFromLastSheetName() throws Exception {
+        String[] splitSheetName = returnLastSheetName().split("-");
+        return Integer.parseInt(splitSheetName[1]);
+    }
+
+    public int returnYearFromLastSheetName() throws Exception {
+        String[] splitSheetName = returnLastSheetName().split("-");
         return Integer.parseInt(splitSheetName[0]);
     }
 
@@ -61,7 +57,7 @@ public class ExcelDB {
         FileInputStream file = new FileInputStream(this.path.toString());
         XSSFWorkbook workbook = new XSSFWorkbook(file);
         FileOutputStream output = new FileOutputStream(this.path.toString());
-        XSSFSheet sheet1 = workbook.createSheet(sheetName);
+        workbook.createSheet(sheetName);
         workbook.write(output);
         workbook.close();
         file.close();
@@ -71,7 +67,7 @@ public class ExcelDB {
     public void createFirstSheet(String sheetName) throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook();
         FileOutputStream output = new FileOutputStream(this.path.toString());
-        XSSFSheet sheet = workbook.createSheet(sheetName);
+        workbook.createSheet(sheetName);
         workbook.write(output);
         workbook.close();
         output.close();
@@ -103,41 +99,16 @@ public class ExcelDB {
         return i;
     }
 
-    public void addHeader() throws Exception {
+    public void addRecord(int indexOfRow, List<String> cellValues) throws Exception {
         FileInputStream file = new FileInputStream(this.path.toString());
         XSSFWorkbook workbook = new XSSFWorkbook(file);
         XSSFSheet sheet = workbook.getSheetAt(workbook.getNumberOfSheets() - 1);
         FileOutputStream outputStream = new FileOutputStream(this.path.toString());
-        Row row = sheet.createRow(0);
-        Cell cell = row.createCell(0);
-        Cell cell1 = row.createCell(1);
-        Cell cell2 = row.createCell(2);
-        Cell cell3 = row.createCell(3);
-        cell.setCellValue("Start");
-        cell1.setCellValue("End");
-        cell2.setCellValue("Task Description");
-        cell3.setCellValue("Duration");
-        workbook.write(outputStream);
-        workbook.close();
-        file.close();
-        outputStream.close();
-    }
-
-    public void addRecord(WorkingDay workingDay) throws Exception {
-        int indexOfEmptyRow = returnIndexOfEmptyRow();
-        FileInputStream file = new FileInputStream(this.path.toString());
-        XSSFWorkbook workbook = new XSSFWorkbook(file);
-        XSSFSheet sheet = workbook.getSheetAt(workbook.getNumberOfSheets() - 1);
-        FileOutputStream outputStream = new FileOutputStream(this.path.toString());
-        Row row = sheet.createRow(indexOfEmptyRow);
-        Cell cell = row.createCell(0);
-        Cell cell1 = row.createCell(1);
-        Cell cell2 = row.createCell(2);
-        Cell cell3 = row.createCell(3);
-        cell.setCellValue(workingDay.getFormattedTimeStamp(workingDay.getStart()));
-        cell1.setCellValue(workingDay.getFormattedTimeStamp(workingDay.getEnd()));
-        cell2.setCellValue(workingDay.getTask());
-        cell3.setCellValue(workingDay.getFormattedDuration());
+        Row row = sheet.createRow(indexOfRow);
+        for(int i = 0; i < cellValues.size(); i++){
+            Cell cell = row.createCell(i);
+            cell.setCellValue(cellValues.get(i));
+        }
         workbook.write(outputStream);
         workbook.close();
         outputStream.close();

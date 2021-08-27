@@ -8,9 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Locale;
+import java.util.*;
 
 public class WorkingDay {
     private OffsetDateTime start;
@@ -19,6 +17,21 @@ public class WorkingDay {
     private String task;
 
     public WorkingDay() {
+    }
+
+    public List<String> getHeader () {
+        List<String> header = new ArrayList(Arrays.asList("Start", "End", "Task Description", "Duration"));
+        return header;
+    }
+
+
+    public List<String> getFormattedValues() throws NullPointerException{
+            List<String> values = new ArrayList();
+            values.add(this.getFormattedTimeStamp(start));
+            values.add(this.getFormattedTimeStamp(end));
+            values.add(this.task);
+            values.add(this.getFormattedDuration());
+            return values;
     }
 
     public String getFormattedDuration() {
