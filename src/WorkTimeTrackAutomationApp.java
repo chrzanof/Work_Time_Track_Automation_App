@@ -6,8 +6,6 @@ import java.util.Scanner;
 
 public class WorkTimeTrackAutomationApp {
     public static final String DEFAULT_FILE_PATH = "Working_Hours.xlsx";
-    public static final String TEXT_RED = "\033[31m";
-    public static final String TEXT_DEFAULT = "\033[0m";
     public static ExcelDB db;
     public static WorkingDayDAO  workingDayDAO;
     public static void main(String[] args) {
@@ -35,20 +33,31 @@ public class WorkTimeTrackAutomationApp {
             workingDay.calculateDuration();
             System.out.println("Today's duration: " + workingDay.getFormattedDuration());
             while (!db.isFileClosed()){
-                    System.out.println(TEXT_RED + "Your file is open by another process! Close file and type anything to continue:" + TEXT_DEFAULT);
-                    scanner.nextLine();
+                    System.out.println("YOUR FILE IS OPENED BY ANOTHER PROCESS! PLEASE CLOSE THE FILE.");
+                    pressEnterKeyToContinue();
             }
-            scanner.close();
             try {
                 workingDayDAO.persist(workingDay);
                 System.out.println("Data successfully saved. You can close program now.");
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            pressEnterKeyToContinue();
+            scanner.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
+    }
+    private static void pressEnterKeyToContinue()
+    {
+        System.out.println("Press Enter key to continue...");
+        try
+        {
+            System.in.read();
+        }
+        catch(Exception e)
+        {}
     }
 }
