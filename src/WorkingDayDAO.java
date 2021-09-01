@@ -13,7 +13,7 @@ public class WorkingDayDAO implements IWorkingDayDAO {
         {
             db.createNextSheet(OffsetDateTime.now().getYear() + "-"+ OffsetDateTime.now().getMonthValue());
         }
-        int indexOfEmptyRow = db.returnIndexOfEmptyRow();
+        int indexOfEmptyRow = db.getIndexOfEmptyRowFromLastSheet();
         if(indexOfEmptyRow == 0){
             db.addRecord(indexOfEmptyRow, workingDay.getHeader());
             indexOfEmptyRow++;

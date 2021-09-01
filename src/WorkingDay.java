@@ -75,7 +75,7 @@ public class WorkingDay {
             newHours = newMinutes / 60;
             newMinutes = newMinutes % 60;
         }
-        return newHours + ":" + (newMinutes < 10 ? "0" + newMinutes : newMinutes) + ":" + (newSeconds < 10 ? "0" + newSeconds : newSeconds) ;
+        return (newHours < 10 ? "0" + newHours : newHours) + ":" + (newMinutes < 10 ? "0" + newMinutes : newMinutes) + ":" + (newSeconds < 10 ? "0" + newSeconds : newSeconds) ;
     }
 
     public OffsetDateTime getStart() {
