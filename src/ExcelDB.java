@@ -1,7 +1,7 @@
-import org.apache.commons.io.FileUtils;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -76,40 +76,21 @@ public class ExcelDB {
     }
 
     public int getIndexOfEmptyRowFromLastSheet() {
-
-//        int i = 0;
-//        try {
-//            FileInputStream file = new FileInputStream(this.path.toString());
-//            XSSFWorkbook workbook = new XSSFWorkbook(file);
-//            XSSFSheet sheet = workbook.getSheetAt(workbook.getNumberOfSheets() - 1);
-//            Iterator<Row> rowIterator = sheet.iterator();
-//            while (rowIterator.hasNext()) {
-//                Row row = rowIterator.next();
-//                Cell cell = row.getCell(0);
-//                String str = cell.getStringCellValue();
-//                if (str == null) {
-//                    break;
-//                } else {
-//                    i++;
-//                }
-//            }
-//            workbook.close();
-//            file.close();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
         int i = 0;
         try {
             FileInputStream file = new FileInputStream(this.path.toString());
             XSSFWorkbook workbook = new XSSFWorkbook(file);
             XSSFSheet sheet = workbook.getSheetAt(workbook.getNumberOfSheets() - 1);
             for (i = 0; i < 1048576; i++) {
-                String str = sheet.getRow(i).getCell(0).getStringCellValue();
+                XSSFRow row = sheet.getRow(i);
+                if(row == null) {
+                    break;
+                }
             }
             workbook.close();
             file.close();
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         return i;
     }

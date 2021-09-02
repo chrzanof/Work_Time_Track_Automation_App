@@ -32,10 +32,7 @@ public class WorkTimeTrackAutomationApp {
             System.out.println("Finished working at: " + workingDay.getFormattedTimeStamp(workingDay.getEnd()));
             workingDay.calculateDuration();
             System.out.println("Today's duration: " + workingDay.getFormattedDuration());
-            while (!db.isFileClosed()){
-                    System.out.println("YOUR FILE IS OPENED BY ANOTHER PROCESS! PLEASE CLOSE THE FILE.");
-                    pressEnterKeyToContinue();
-            }
+
             try {
                 workingDayDAO.persist(workingDay);
                 System.out.println("Data successfully saved. You can close program now.");
@@ -47,10 +44,8 @@ public class WorkTimeTrackAutomationApp {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
-    private static void pressEnterKeyToContinue()
+    public static void pressEnterKeyToContinue()
     {
         System.out.println("Press Enter key to continue...");
         try

@@ -9,6 +9,10 @@ public class WorkingDayDAO implements IWorkingDayDAO {
 
     @Override
     public void persist(WorkingDay workingDay) throws Exception {
+        while (!db.isFileClosed()){
+            System.out.println("YOUR FILE IS OPENED BY ANOTHER PROCESS! PLEASE CLOSE THE FILE.");
+            WorkTimeTrackAutomationApp.pressEnterKeyToContinue();
+        }
         if(!db.isNowTheSameMonthAsInLastSheetName(workingDay))
         {
             db.createNextSheet(OffsetDateTime.now().getYear() + "-"+ OffsetDateTime.now().getMonthValue());
