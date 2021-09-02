@@ -19,19 +19,17 @@ public class WorkingDay {
     public WorkingDay() {
     }
 
-    public List<String> getHeader () {
-        List<String> header = new ArrayList(Arrays.asList("Start", "End", "Task Description", "Duration"));
+    public List<Object> getHeader () {
+        List<Object> header = new ArrayList(Arrays.asList("Start", "End", "Task Description", "Duration"));
         return header;
     }
 
-
-    public List<String> getFormattedValues() throws NullPointerException{
-            List<String> values = new ArrayList();
-            values.add(this.getFormattedTimeStamp(start));
-            values.add(this.getFormattedTimeStamp(end));
-            values.add(this.task);
-            values.add(this.getFormattedDuration());
-            return values;
+    public List<Object> getValuesWithoutDuration() {
+        List<Object> values = new ArrayList();
+        values.add(this.start);
+        values.add(this.end);
+        values.add(this.task);
+        return values;
     }
 
     public String getFormattedDuration() {

@@ -22,6 +22,6 @@ public class WorkingDayDAO implements IWorkingDayDAO {
             db.addRecord(indexOfEmptyRow, workingDay.getHeader());
             indexOfEmptyRow++;
         }
-        db.addRecord(indexOfEmptyRow, workingDay.getFormattedValues());
+        db.addRecord(indexOfEmptyRow, workingDay.getValuesWithoutDuration());
     }
 }
